@@ -1,0 +1,168 @@
+from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
+import banco as banco
+import tkinter as tk
+
+def bt_Sair():
+    login.destroy()
+    
+def retornar_login():
+    # Retorna o necessario
+    user.place(x=50, y=50)
+    userF.place(x=100, y=50)
+    password.place(x=50, y=75)
+    passwordF.place(x=100, y=75)
+    retornar.place(x=500)
+    enter.place(x=50, y=150)
+
+    # Remover o desnecessario
+    nameF.place(x=500)
+    name.place(x=500)
+    estadoF.place(x=500)
+    estado.place(x=500)
+    register1.place(x=500)
+
+def registrar_Cadastro():
+    # Pegar informações para o Banco
+    NameBanco = nameF.get()
+    EmailBanco = userF.get()
+    PasswordBanco = passwordF.get()
+    EstadoBanco = estadoF.get()
+
+    if(NameBanco == "" and EmailBanco == "" and PasswordBanco == "" and EstadoBanco == ""):
+        messagebox.showerror(title="Erro de Registro", message="Preencha todos os Campos")
+    else:
+        # Inserir no Banco
+        banco.cursor.execute("""
+        INSERT INTO Users(Name, Email, Password, Estado) VALUES(?, ?, ?, ?)
+        """,(NameBanco, EmailBanco, PasswordBanco, EstadoBanco))
+        banco.conn.commit()
+        messagebox.showinfo(title="Conta criada", message="Cadastrado(a) com sucesso!")
+
+def acessando_Login():
+    EmailLogin = userF.get()
+    PasswordLogin = passwordF.get()
+
+    banco.cursor.execute("""
+    SELECT * FROM Users
+    WHERE Email = ? AND Password = ?
+    """,(EmailLogin, PasswordLogin))
+    VerificarLogin = banco.cursor.fetchone()
+    try:
+        if(EmailLogin in VerificarLogin and PasswordLogin in VerificarLogin):
+            messagebox.showinfo(title="Login", message="Seja Bem-vindo!")
+
+            login.destroy()
+
+#   ~~~~~~~~~~~~~~ TELA DE MENU ~~~~~~~~~~~~
+            window = tk.Tk
+            app = tk.Tk()
+            app.geometry("500x300")
+            app.title("Menu")
+            app.configure(background='#dde')
+
+            # Criação dos comandos das opções do menu
+            def fazer_pedido():
+                print("Botão 'Fazer Pedido' foi clicado.")
+
+            def cadastrarUsers():
+                print("Botão 'Cadastrar' foi clicado.")
+            
+            # Criação do menu
+            barraDeMenus = Menu(app)
+            menuContatos = Menu(barraDeMenus, tearoff=0)
+            menuContatos.add_command(label="Fazer pedido", command=fazer_pedido)
+            menuContatos.add_command(label="Cadastrar", command=cadastrarUsers)
+            menuContatos.add_separator()
+            
+            menuContatos.add_command(label="Sair", command=exit)
+            barraDeMenus.add_cascade(label="Menu", menu=menuContatos)
+            app.config(menu=barraDeMenus)
+
+    except:
+             messagebox.showerror(title="Conta não encontrada", message="Certifique-se que já está cadastrado! ")
+
+    mainloop()
+        
+    
+# TELA DE LOGIN
+login = Tk()
+corDeFundo= 'orange'
+login.title('LOGIN')
+login["bg"] = corDeFundo
+login.geometry("300x300+100+100")
+login.resizable(width=False, height=False)
+# login.iconbitmap(default="recursos/icone.ico")
+
+# image = PhotoImage(file="recursos/imagelogin.png")
+# img = Label(login, image=image, bg='#0d1e24')
+# img.place(x=110, y=205)
+
+title = Label(login, text='LOGIN', bg=corDeFundo, foreground='white')
+title.pack(side=TOP, fill=X)
+
+user = Label(login, text='Usuario:', bg=corDeFundo, foreground='white')
+user.place(x=46, y=90)
+userF = Entry(login)
+userF.place(x=100, y=90)
+
+password = Label(login, text='Senha:', bg=corDeFundo, foreground='white')
+password.place(x=50, y=130)
+passwordF = Entry(login, show="•")
+passwordF.place(x=100, y=130)
+
+
+enter = ttk.Button(login, width='10', text='ENTRAR', style='Custom.TButton', command=acessando_Login)
+enter.place(x=115, y=180)
+
+
+register1 = Button(login, width='15', text='CRIAR CADASTRO', command=registrar_Cadastro)
+retornar = Button(login, width='15', text='VOLTAR', command=retornar_login)
+estado = Label(login, text='Estado:', bg='orange', foreground='white')
+name = Label(login, text='Nome:', bg='orange', foreground='white')
+estadoF = Entry(login)
+nameF = Entry(login)
+
+login.mainloop()
+
+############### TELA DE CADASTRO #################
+def cadastrar():
+    from tkinter import messagebox
+    import tkinter as tk
+    import tkinter as ttk
+
+cad = Tk()
+corDeFundo= '#0b2e3b'
+cad.title('Cadastro')
+cad["bg"] = corDeFundo
+cad.geometry("300x300+100+100")
+cad.resizable(width=False, height=False)
+
+title = Label(cad, text='Cadastro', bg=corDeFundo, foreground='white', font=20)
+title.pack(side=TOP, fill=X)
+
+
+nomer = Label(cad, text='Nome:', bg=corDeFundo, foreground='white', font=15)
+nomer.place(x=46, y=50)
+nomeF = Entry(cad)
+nomeF.place(x=100, y=50)
+
+
+user = Label(cad, text='Usuario:', bg=corDeFundo, foreground='white', font=15)
+user.place(x=36, y=90)
+userF = Entry(cad, show="•")
+userF.place(x=100, y=90)
+
+password = Label(cad, text='Senha:', bg=corDeFundo, foreground='white', font=15)
+password.place(x=44, y=130)
+passwordF = Entry(cad, show="•")
+passwordF.place(x=100, y=130)
+
+
+enter = Button(cad, width='11', text='Cadastrar', command=cadastrar)
+enter.place(x=115, y=180)
+enter = Button(cad, width='11', text='Voltar', command=acessando_Login)
+enter.place(x=115, y=220)
+
+cad.mainloop()
